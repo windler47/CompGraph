@@ -4,3 +4,9 @@
 [submodule "glm"]
 	path = glm
 	url = https://github.com/Groovounet/glm
+[submodule "cmake-build-debug/libepoxy"]
+	path = cmake-build-debug/libepoxy
+	url = https://github.com/anholt/libepoxy.git
+[submodule "libepoxy"]
+	path = libepoxy
+	url = https://github.com/anholt/libepoxy.git
