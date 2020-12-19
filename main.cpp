@@ -17,7 +17,7 @@
 int main() {
   uint32_t windowWidth = 640;
   uint32_t windowHeight = 480;
-  GLFWwindow *window = prepareWindow(windowHeight, windowWidth, "Honor");
+  GLFWwindow *window = prepareWindow(windowWidth, windowHeight,"Honor");
   loadGl();
 
   // configure gl
@@ -29,10 +29,10 @@ int main() {
   Shader shader("shaders/simple_vertex.glsl", "shaders/simple_fragment.glsl");
 
   float vertices[] = {
-      0.5f,  0.5f,  0.0f,
-      0.5f, -0.5f,  0.0f,
-      -0.5f, -0.5f, 0.0f,
-      -0.5f,  0.5f, 0.0f,
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,
+      0.5f, -0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+      -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+      -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f
   };
 
   unsigned int indices[] = {  // помните, что мы начинаем с 0!
@@ -53,8 +53,10 @@ int main() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+  glVertexAttribPointer(0 , 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1,  3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
 
   // обратите внимание, что данное действие разрешено, вызов glVertexAttribPointer зарегистрировал VBO как привязанный вершинный буферный объект для вершинного атрибута, так что после мы можем спокойно отвязать
   glBindBuffer(GL_ARRAY_BUFFER, 0);
