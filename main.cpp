@@ -15,8 +15,8 @@
 
 
 int main() {
-  uint32_t windowWidth = 640;
-  uint32_t windowHeight = 480;
+  int windowWidth = 640;
+  int windowHeight = 480;
   GLFWwindow *window = prepareWindow(windowWidth, windowHeight,"Honor");
   loadGl();
 
@@ -25,7 +25,7 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  Camera camera = Camera(glm::vec3(0, 0, -1));
+  Camera camera = Camera(glm::vec3(20.0f, 20.0f, 20.0f));
   Shader shader("shaders/simple_vertex.glsl", "shaders/simple_fragment.glsl");
 
   float vertices[] = {
@@ -68,16 +68,46 @@ int main() {
   // Изменение других значений VAO требует вызова glBindVertexArray в любом случае, поэтому мы обычно не снимаем привязку VAO (или VBO), когда это непосредственно не требуется.
   glBindVertexArray(0);
 
+  glm::mat4 view = glm::mat4(1.0f);
+  view = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+  std::cout << "-----BEGIN VIEW-----" << std::endl;
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      std::cout << view[i][j] << " ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << "-----END-----" << std::endl;
 
   while (!glfwWindowShouldClose(window)) {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
+
+//    if (width != windowWidth or height != windowHeight){
+//      shader.setMat4("projection", camera.GetProjectionMatrix((float) width, (float) height));
+//      windowWidth = width;
+//      windowHeight = height;
+//    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     shader.Use();
+
+    shader.setMat4("view", camera.GetViewMatrix());
+    glm::mat4 projection = glm::perspective(45.0f, (float)width / (float)height, 0.1f, 100.0f);
+
+    shader.setMat4("projection", camera.GetProjectionMatrix((float)width, (float)height));
+
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f,  0.0f,  0.0f));
+    model = glm::rotate(model, 45.f, glm::vec3(0.0, 0.0, 1.0));
+
+    shader.setMat4("model", model);
+
+
     glBindVertexArray(VAO); // поскольку у нас есть только один VАО, нет необходимости связывать его каждый раз, но мы сделаем это, чтобы все было немного более организованно
     //glDrawArrays(GL_TRIANGLES, 0, 6);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

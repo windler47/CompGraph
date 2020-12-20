@@ -16,7 +16,7 @@ glm::mat4 Camera::GetViewMatrix() {
   return glm::lookAt(Position, Target, Up);
 }
 glm::mat4 Camera::GetProjectionMatrix(float width, float height) {
-  return glm::perspective(glm::radians(Fov), width/height, minVisibleDistance, maxVisibleDistance);
+  return glm::perspective(Fov, width/height, minVisibleDistance, maxVisibleDistance);
 }
 void Camera::MoveTo(const glm::vec3 &position) {
   Position = position;
