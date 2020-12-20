@@ -11,34 +11,30 @@
 
 #include "Shader.hpp"
 
-struct Vertex {
-
-  // Позиция
+struct ColoredVertex {
   glm::vec3 Position;
+  glm::vec3 Color;
+};
 
-  // Нормаль
+struct TexturedVertex {
+  glm::vec3 Position;
   glm::vec3 Normal;
-
-  // Текстурные координаты
-  glm::vec2 TexCoords;
-
+  glm::vec2 TextureCoordinate;
 };
 
-struct Texture {
-  unsigned int id;
-  std::string type;
-  std::string path;
-};
 
-class Mesh {
+//struct Texture {
+//  unsigned int id;
+//  std::string type;
+//  std::string path;
+//};
+
+class ColoredObject {
  public:
-  // Данные mesh-а
-  std::vector<Vertex>       vertices;
-  std::vector<unsigned int> indices;
-  std::vector<Texture>      textures;
+  std::vector<ColoredVertex>  vertices;
+  std::vector<unsigned int>   indices;
 
-  // Конструктор
-  Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture> textures);
+  ColoredObject(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices);
 
   // Рендеринг mesh-а
   void Draw(Shader& shader);
@@ -46,9 +42,8 @@ class Mesh {
  private:
   // Данные для рендеринга
   unsigned int VBO, VAO, EBO;
-
   // Инициализируем все буферные объекты/массивы
-  void setupMesh();
+  void SetUp();
 };
 
 #endif //COMPUTERGRAPHICSNEW__GLOBJECT_HPP_
