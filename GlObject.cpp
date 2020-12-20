@@ -92,13 +92,13 @@
 //  glBindVertexArray(0);
 //}
 
-ColoredObject::ColoredObject(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices) {
+ColoredMesh::ColoredMesh(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices) {
   this->vertices = std::move(vertices);
   this->indices = std::move(indices);
   SetUp();
 }
 
-void ColoredObject::SetUp() {
+void ColoredMesh::SetUp() {
   glGenVertexArrays(1, &VAO);
   glGenBuffers(1, &VBO);
   glGenBuffers(1, &EBO);
@@ -114,7 +114,9 @@ void ColoredObject::SetUp() {
 
   glVertexAttribPointer(0 , 3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)nullptr);
   glEnableVertexAttribArray(0);
-  glVertexAttribPointer(1,  3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)(sizeof(ColoredVertex::Position)));
+  glVertexAttribPointer(1,  3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)(offsetof(ColoredVertex, Color)));
+  glEnableVertexAttribArray(1);
+  glVertexAttribPointer(2,  3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)(offsetof(ColoredVertex, Normal)));
   glEnableVertexAttribArray(1);
   // вызов glVertexAttribPointer зарегистрировал VBO как привязанный вершинный буферный объект для вершинного атрибута, так что после мы можем спокойно отвязать
 //  glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -122,7 +124,7 @@ void ColoredObject::SetUp() {
   // помните: не отвязывайте EBO, пока VАО активен, поскольку связанного объект буфера элемента хранится в VАО; сохраняйте привязку EBO.
 //  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
-void ColoredObject::Draw(Shader &shader) {
+void ColoredMesh::Draw(Shader &shader) {
   glBindVertexArray(VAO);
   glBindBuffer(GL_ARRAY_BUFFER, VBO);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

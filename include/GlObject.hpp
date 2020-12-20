@@ -14,6 +14,7 @@
 struct ColoredVertex {
   glm::vec3 Position;
   glm::vec3 Color;
+  glm::vec3 Normal;
 };
 
 struct TexturedVertex {
@@ -29,12 +30,12 @@ struct TexturedVertex {
 //  std::string path;
 //};
 
-class ColoredObject {
+class ColoredMesh {
  public:
   std::vector<ColoredVertex>  vertices;
   std::vector<unsigned int>   indices;
 
-  ColoredObject(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices);
+  ColoredMesh(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices);
 
   // Рендеринг mesh-а
   void Draw(Shader& shader);
