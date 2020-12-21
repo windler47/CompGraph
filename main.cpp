@@ -1,15 +1,12 @@
 #define GL_SILENCE_DEPRECATION // We know that Apple don't like OpenGL API since macOS 10.14 but still want to use it
 #define GLFW_INCLUDE_NONE
 
-#include <iostream>
-
 #include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <map>
-#include <string>
 #include "helpers.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
@@ -21,29 +18,6 @@
 
 
 int main(int argc, char *argv[]) {
-  unsigned int lab_number = 0;
-  if (argc < 2){
-    std::cerr << "Set lab number";
-    exit(EXIT_FAILURE);
-  } {
-    std::string arg = argv[1];
-    try {
-      std::size_t pos;
-      lab_number = std::stoi(arg, &pos);
-      if (pos < arg.size()) {
-        std::cerr << "Trailing characters after number: " << arg << '\n';
-      }
-    } catch (std::invalid_argument const &ex) {
-      std::cerr << "Invalid number: " << arg << '\n';
-    } catch (std::out_of_range const &ex) {
-      std::cerr << "Number out of range: " << arg << '\n';
-    }
-    if (lab_number == 0) {
-      std::cerr << "Lab number parse failed";
-      exit(EXIT_FAILURE);
-    }
-  }
-
   int windowWidth = 640;
   int windowHeight = 480;
   GLFWwindow *window = prepareWindow(windowWidth, windowHeight, "Honor");
@@ -74,14 +48,12 @@ int main(int argc, char *argv[]) {
   TexturedMesh figure = TexturedMesh(vertex_vector, index_vector, texture);
 
   while (!glfwWindowShouldClose(window)) {
-    if (lab_number != 1){
-      double t = glfwGetTime();
-      double ellipse_x = 7.0f * cos(t);
-      double ellipse_y = 12.0f * sin(t);
-      double z = -ellipse_x - ellipse_y - 20;
-      glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
-      camera.MoveTo(camera_coords);
-    }
+    double t = glfwGetTime();
+    double ellipse_x = 7.0f * cos(t);
+    double ellipse_y = 12.0f * sin(t);
+    double z = -ellipse_x - ellipse_y - 20;
+    glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
+    camera.MoveTo(camera_coords);
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
