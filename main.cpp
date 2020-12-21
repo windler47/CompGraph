@@ -1,6 +1,8 @@
 #define GL_SILENCE_DEPRECATION // We know that Apple don't like OpenGL API since macOS 10.14 but still want to use it
 #define GLFW_INCLUDE_NONE
 
+#include <iostream>
+
 #include <glad/glad.h>
 
 #include <GLFW/glfw3.h>
@@ -13,11 +15,32 @@
 #include "GlObject.hpp"
 
 #include <stb_image.h>
-
 #include "lab_work_3.hpp"
 
 
 int main(int argc, char *argv[]) {
+  unsigned int lab_number = 0;
+  if (argc < 2){
+    std::cerr << "Set lab number";
+    exit(EXIT_FAILURE);
+  } {
+    std::string arg = argv[1];
+    try {
+      std::size_t pos;
+      lab_number = std::stoi(arg, &pos);
+      if (pos < arg.size()) {
+        std::cerr << "Trailing characters after number: " << arg << '\n';
+      }
+    } catch (std::invalid_argument const &ex) {
+      std::cerr << "Invalid number: " << arg << '\n';
+    } catch (std::out_of_range const &ex) {
+      std::cerr << "Number out of range: " << arg << '\n';
+    }
+    if (lab_number == 0) {
+      std::cerr << "Lab number parse failed";
+      exit(EXIT_FAILURE);
+    }
+  }
   int windowWidth = 640;
   int windowHeight = 480;
   GLFWwindow *window = prepareWindow(windowWidth, windowHeight, "Honor");
@@ -75,10 +98,12 @@ int main(int argc, char *argv[]) {
     shader.setMat4("model", model);
     figure.Draw(shader);
 
-    model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(1.5f, 1.5f, 2.0f));
-    shader.setMat4("model", model);
-    figure.Draw(shader);
+    if (lab_number == 4){
+      model = glm::mat4(1.0f);
+      model = glm::translate(model, glm::vec3(1.5f, 1.5f, 2.0f));
+      shader.setMat4("model", model);
+      figure.Draw(shader);
+    }
 
     glfwSwapBuffers(window);
     glfwPollEvents();
