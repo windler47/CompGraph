@@ -83,11 +83,13 @@ int main(int argc, char *argv[]) {
 
   while (!glfwWindowShouldClose(window)) {
     if (lab_number != 1){
-      glm::vec4 camera_position = glm::vec4(10.0f * cos(glfwGetTime()), 0, 15.0f * sin(glfwGetTime()), 1);
-      glm::mat4 camera_model = glm::mat4(1.0f);
-      camera_model = glm::rotate(camera_model, 45.f, glm::vec3(1.0, 1.0, 0.0));
-      camera_model = glm::translate(camera_model, glm::vec3(camera_offset, camera_offset, camera_offset));
-      camera.MoveTo(glm::vec3(camera_model * camera_position));
+      double t = glfwGetTime();
+      double ellipse_x = 7.0f * cos(t);
+      double ellipse_y = 12.0f * sin(t);
+      double z = -ellipse_x - ellipse_y - 20;
+      glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
+      camera.MoveTo(camera_coords);
+      std::cout << "Cam: "<< camera_coords.x << "," << camera_coords.y << "," << camera_coords.z << " SUMM: "<< camera_coords.x + camera_coords.y + camera_coords.z << std::endl;
     }
 
     int width, height;
