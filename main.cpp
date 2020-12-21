@@ -89,7 +89,6 @@ int main(int argc, char *argv[]) {
       double z = -ellipse_x - ellipse_y - 20;
       glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
       camera.MoveTo(camera_coords);
-      std::cout << "Cam: "<< camera_coords.x << "," << camera_coords.y << "," << camera_coords.z << " SUMM: "<< camera_coords.x + camera_coords.y + camera_coords.z << std::endl;
     }
 
     int width, height;
