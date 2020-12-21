@@ -1,6 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 17.12.2020.
-//
 #define GLFW_INCLUDE_NONE
 
 #ifndef COMPUTERGRAPHICSNEW_HELPERS_HPP
