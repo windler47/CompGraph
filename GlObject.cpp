@@ -112,12 +112,12 @@ void ColoredMesh::SetUp() {
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
-  glVertexAttribPointer(0 , 3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)nullptr);
   glEnableVertexAttribArray(0);
+  glVertexAttribPointer(0 , 3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)nullptr);
+  glEnableVertexAttribArray(1);
   glVertexAttribPointer(1,  3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)(offsetof(ColoredVertex, Color)));
-  glEnableVertexAttribArray(1);
+  glEnableVertexAttribArray(2);
   glVertexAttribPointer(2,  3, GL_FLOAT, GL_FALSE, sizeof(ColoredVertex), (void*)(offsetof(ColoredVertex, Normal)));
-  glEnableVertexAttribArray(1);
   // вызов glVertexAttribPointer зарегистрировал VBO как привязанный вершинный буферный объект для вершинного атрибута, так что после мы можем спокойно отвязать
 //  glBindBuffer(GL_ARRAY_BUFFER, 0);
   glBindVertexArray(0);

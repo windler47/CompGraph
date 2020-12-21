@@ -8,17 +8,17 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <map>
+#include <set>
 #include "helpers.hpp"
 #include "Shader.hpp"
 #include "Camera.hpp"
 #include "GlObject.hpp"
 
-
-
 int main() {
   int windowWidth = 640;
   int windowHeight = 480;
-  GLFWwindow *window = prepareWindow(windowWidth, windowHeight,"Honor");
+  GLFWwindow *window = prepareWindow(windowWidth, windowHeight, "Honor");
   loadGl();
 
   // configure gl
@@ -26,60 +26,113 @@ int main() {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  Camera camera = Camera(glm::vec3(20.0f, 20.0f, 20.0f));
+  Camera camera = Camera(glm::vec3(-10.0f, -10.0f, -10.0f));
   Shader shader("shaders/color_vertex.glsl", "shaders/color_fragment.glsl");
   shader.Use();
   shader.setMat4("projection", camera.GetProjectionMatrix((float) windowWidth, (float) windowHeight));
 
   shader.setVec3("light.direction", 1.0f, 1.0f, 1.0f);
-  shader.setVec3("light.ambient", 0.05f, 0.05f, 0.05f);
-  shader.setVec3("light.diffuse", 0.2f, 0.2f, 0.2f);
-  shader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-  unsigned int indices[] = {  // помните, что мы начинаем с 0!
-      0, 1, 3, // первый треугольник
-      1, 2, 3  // второй треугольник
-  };
-  std::vector<unsigned int> index_vector = std::vector(std::begin(indices), std::end(indices));
+  shader.setFloat("light.ambient", 0.05f);
+  shader.setFloat("light.diffuse", 0.5f);
+  shader.setFloat("light.specular", 0.9f);
 
   ColoredVertex vertices[] = {
-      {.Position = glm::vec3(0.5f,  0.5f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(0.5f,  -0.5f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(-0.5f,  -0.5f,  0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(-0.5f,  0.5f,  0.0f), .Color = glm::vec3(1.0f, 1.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
+      // rear
+      {.Position = glm::vec3(2.0f, 2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(2.0f, -2.0f, 0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+
+      {.Position = glm::vec3(-2.0f, -2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(2.0f, -2.0f, 0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 0.0f, -1.0f)},
+
+      // front
+      {.Position = glm::vec3(3.0f, 3.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+      {.Position = glm::vec3(3.0f, -1.0f, 5.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+      {.Position = glm::vec3(-1.0f, 3.0f, 5.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+
+      {.Position = glm::vec3(-1.0f, -1.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+      {.Position = glm::vec3(3.0f, -1.0f, 5.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+      {.Position = glm::vec3(-1.0f, 3.0f, 5.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(1.0f, 0.0f, 0.0f)},
+
+      // right
+      {.Position = glm::vec3(2.0f, 2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(2.0f, -2.0f, 0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(3.0f, 3.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+
+      {.Position = glm::vec3(3.0f, -1.0f, 5.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(2.0f, -2.0f, 0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+      {.Position = glm::vec3(3.0f, 3.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(5.0f, 0.0f, -1.0f)},
+
+      // top
+      {.Position = glm::vec3(2.0f, 2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+      {.Position = glm::vec3(3.0f, 3.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+
+      {.Position = glm::vec3(-1.0f, 3.0f, 5.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+      {.Position = glm::vec3(3.0f, 3.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0.0f, 5.0f, -1.0f)},
+
+      // left
+      {.Position = glm::vec3(-1.0f, 3.0f, 5.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 0.0f, 1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 5.0f, 1.0f)},
+      {.Position = glm::vec3(-1.0f, -1.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 0.0f, 1.0f)},
+
+      {.Position = glm::vec3(-2.0f, -2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 5.0f, 1.0f)},
+      {.Position = glm::vec3(-2.0f, 2.0f, 0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 5.0f, 1.0f)},
+      {.Position = glm::vec3(-1.0f, -1.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(-5.0f, 0.0f, 1.0f)},
+
+      // bottom
+      {.Position = glm::vec3(-1.0f, -1.0f, 5.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)},
+      {.Position = glm::vec3(-2.0f, -2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)},
+      {.Position = glm::vec3(3.0f, -1.0f, 5.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)},
+
+      {.Position = glm::vec3(2.0f, -2.0f, 0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)},
+      {.Position = glm::vec3(-2.0f, -2.0f, 0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)},
+      {.Position = glm::vec3(3.0f, -1.0f, 5.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0.0f, -5.0f, 1.0f)}
   };
+
   std::vector<ColoredVertex> vertex_vector = std::vector(std::begin(vertices), std::end(vertices));
+  std::vector<unsigned int> index_vector;
+  index_vector.reserve(vertex_vector.size());
+  for (int i = 0; i < vertex_vector.size(); ++i) {
+    index_vector.push_back(i);
+  }
 
   ColoredMesh square = ColoredMesh(vertex_vector, index_vector);
 
-  const float radius = 10.0f;
+  const double camera_offset = -20.0 / 3.0;
+
   while (!glfwWindowShouldClose(window)) {
-//    float camX = sin(glfwGetTime()) * radius;
-//    float camZ = cos(glfwGetTime()) * radius;
-//    camera.MoveTo(glm::vec3(camX, 0, camZ));
+    glm::vec4 camera_position = glm::vec4(10.0f * cos(glfwGetTime()), 0, 15.0f * sin(glfwGetTime()), 1);
+    glm::mat4 camera_model = glm::mat4(1.0f);
+    camera_model = glm::rotate(camera_model, 45.f, glm::vec3(1.0, 1.0, 0.0));
+    camera_model = glm::translate(camera_model, glm::vec3(camera_offset, camera_offset, camera_offset));
+    camera.MoveTo(glm::vec3(camera_model * camera_position));
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
 
-    if (width != windowWidth || height != windowHeight){
+    if (width != windowWidth || height != windowHeight) {
       windowWidth = width;
       windowHeight = height;
       shader.setMat4("projection", camera.GetProjectionMatrix((float) windowWidth, (float) windowHeight));
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     shader.setMat4("view", camera.GetViewMatrix());
-
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f,  0.0f,  0.0f));
-//    model = glm::rotate(model, 45.f, glm::vec3(0.0, 0.0, 1.0));
-    model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
-    shader.setMat4("model", model);
     shader.setVec3("viewPos", camera.Position);
 
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+//    model = glm::rotate(model, 45.f, glm::vec3(0.0, 0.0, 1.0));
+//    model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+    shader.setMat4("model", model);
     square.Draw(shader);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
   }

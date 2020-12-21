@@ -17,19 +17,6 @@ struct ColoredVertex {
   glm::vec3 Normal;
 };
 
-struct TexturedVertex {
-  glm::vec3 Position;
-  glm::vec3 Normal;
-  glm::vec2 TextureCoordinate;
-};
-
-
-//struct Texture {
-//  unsigned int id;
-//  std::string type;
-//  std::string path;
-//};
-
 class ColoredMesh {
  public:
   std::vector<ColoredVertex>  vertices;
