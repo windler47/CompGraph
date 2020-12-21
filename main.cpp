@@ -74,14 +74,14 @@ int main(int argc, char *argv[]) {
   TexturedMesh figure = TexturedMesh(vertex_vector, index_vector, texture);
 
   while (!glfwWindowShouldClose(window)) {
-//    if (lab_number != 1){
-//      double t = glfwGetTime();
-//      double ellipse_x = 7.0f * cos(t);
-//      double ellipse_y = 12.0f * sin(t);
-//      double z = -ellipse_x - ellipse_y - 20;
-//      glm::vec3 camera_coords = glm::vec3(ellipse_x, 0, ellipse_y);
-//      camera.MoveTo(camera_coords);
-//    }
+    if (lab_number != 1){
+      double t = glfwGetTime();
+      double ellipse_x = 7.0f * cos(t);
+      double ellipse_y = 12.0f * sin(t);
+      double z = -ellipse_x - ellipse_y - 20;
+      glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
+      camera.MoveTo(camera_coords);
+    }
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -98,9 +98,13 @@ int main(int argc, char *argv[]) {
     shader.setVec3("viewPos", camera.Position);
 
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
 
+    shader.setMat4("model", model);
+    figure.Draw(shader);
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(1.5f, 1.5f, 2.0f));
     shader.setMat4("model", model);
     figure.Draw(shader);
 
