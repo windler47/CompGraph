@@ -15,8 +15,10 @@
 #include "Camera.hpp"
 #include "GlObject.hpp"
 
-#include "lab_work_1.hpp"
-#include "lab_work_2.hpp"
+#include <stb_image.h>
+
+#include "lab_work_3.hpp"
+
 
 int main(int argc, char *argv[]) {
   unsigned int lab_number = 0;
@@ -51,46 +53,35 @@ int main(int argc, char *argv[]) {
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
-  Camera camera = Camera(glm::vec3(20.0f, 20.0f, 20.0f));
-  Shader shader("shaders/color_vertex.glsl", "shaders/color_fragment.glsl");
+  Camera camera = Camera(glm::vec3(0.0f, 10.0f, 15.0f));
+  Shader shader("shaders/texture_vertex.glsl", "shaders/texture_fragment.glsl");
   shader.Use();
   shader.setMat4("projection", camera.GetProjectionMatrix((float) windowWidth, (float) windowHeight));
   shader.setVec3("light.direction", 1.0f, 1.0f, 1.0f);
-  shader.setFloat("light.ambient", 0.05f);
-  shader.setFloat("light.diffuse", 0.5f);
+  shader.setFloat("light.ambient", 0.1f);
+  shader.setFloat("light.diffuse", 0.7f);
   shader.setFloat("light.specular", 0.9f);
+  shader.setInt("texture", 0);
 
-  std::vector<ColoredVertex> vertex_vector;
   std::vector<unsigned int> index_vector;
-  switch ( lab_number ) {
-    case 1:
-      vertex_vector = std::vector(std::begin(LabFirst::vertices), std::end(LabFirst::vertices));
-      index_vector = std::vector(std::begin(LabFirst::indices), std::end(LabFirst::indices));
-      break;
-    case 2:
-      vertex_vector = std::vector(std::begin(LabSecond::vertices), std::end(LabSecond::vertices));
-      for (int i = 0; i < vertex_vector.size(); ++i) {
-        index_vector.push_back(i);
-      }
-      break;
-    default:
-      std::cout << "Unknown lab number" << std::endl;
-      break;
-  }
-  ColoredMesh figure = ColoredMesh(vertex_vector, index_vector);
+  std::vector<TexturedVertex> vertex_vector = std::vector(std::begin(LabThird::vertices), std::end(LabThird::vertices));;
 
-  const double camera_offset = -20.0 / 3.0;
+  index_vector.reserve(vertex_vector.size());
+  for (int i = 0; i < vertex_vector.size(); ++i) {
+    index_vector.push_back(i);
+  }
+  unsigned int texture = load_texture("wooden_container.jpg");
+  TexturedMesh figure = TexturedMesh(vertex_vector, index_vector, texture);
 
   while (!glfwWindowShouldClose(window)) {
-    if (lab_number != 1){
-      double t = glfwGetTime();
-      double ellipse_x = 7.0f * cos(t);
-      double ellipse_y = 12.0f * sin(t);
-      double z = -ellipse_x - ellipse_y - 20;
-      glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
-      camera.MoveTo(camera_coords);
-      std::cout << "Cam: "<< camera_coords.x << "," << camera_coords.y << "," << camera_coords.z << " SUMM: "<< camera_coords.x + camera_coords.y + camera_coords.z << std::endl;
-    }
+//    if (lab_number != 1){
+//      double t = glfwGetTime();
+//      double ellipse_x = 7.0f * cos(t);
+//      double ellipse_y = 12.0f * sin(t);
+//      double z = -ellipse_x - ellipse_y - 20;
+//      glm::vec3 camera_coords = glm::vec3(ellipse_x, 0, ellipse_y);
+//      camera.MoveTo(camera_coords);
+//    }
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);

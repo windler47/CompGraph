@@ -7,17 +7,11 @@
 #include "helpers.hpp"
 
 #include <iostream>
+#include <string>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <vector>
-
-
-struct Vertex
-{
-  glm::vec3 position;
-  glm::vec4 color;
-};
+#include <stb_image.h>
 
 GLFWwindow* prepareWindow(uint32_t width, uint32_t height, const std::string& title) {
   if (!glfwInit()) {
@@ -57,27 +51,6 @@ void loadGl() {
   }
 }
 
-//void bindVertexData(const std::vector<Vertex> &verticies)
-//{
-//  // OpenGL должен получить байтовые смещения полей относительно структуры VertexP2C4.
-//  const void *colorOffset = reinterpret_cast<void *>(offsetof(Vertex, color));
-//  const void *positionOffset = reinterpret_cast<void *>(offsetof(Vertex, position));
-//  const size_t size = sizeof(Vertex);
-//
-//  // Привязываем атрибут i_color к данным в вершинном буфере.
-//  const int colorLocation = glGetAttribLocation(m_program, "i_color");
-//  glEnableVertexAttribArray(colorLocation);
-//  glVertexAttribPointer(colorLocation, glm::vec4().length(), GL_FLOAT, GL_FALSE, stride, colorOffset);
-//
-//  // Привязываем атрибут i_position к данным в вершинном буфере.
-//  const int posLocation = glGetAttribLocation(m_program, "i_position");
-//  glEnableVertexAttribArray(posLocation);
-//  glVertexAttribPointer(posLocation, glm::vec2().length(), GL_FLOAT, GL_FALSE, stride, posOffset);
-//
-//  // Загружаем данные в вершинный буфер.
-//  glBufferData(GL_ARRAY_BUFFER, stride * verticies.size(), verticies.data(), GL_STATIC_DRAW);
-//}
-
 void print_gl_context_info()
 {
     const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
@@ -85,8 +58,6 @@ void print_gl_context_info()
     std::cout << "Renderer:" << renderer << std::endl;
     std::cout << "OpenGL version supported:" << version << std::endl;
 }
-
-
 
 void error_callback(int error, const char* description)
 {
@@ -99,4 +70,24 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     else
         std::cout << "Key: " << key << " action: "<< action << " scancode: " << scancode << " mods: " << mods << std::endl;
+}
+
+unsigned int load_texture(const std::string& filename) {
+  int width, height, nrChannels;
+  unsigned char *data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+  if (!data) {
+    std::cout << "Failed to load texture" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  unsigned int texture;
+  glGenTextures(1, &texture);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+  glGenerateMipmap(GL_TEXTURE_2D);
+//  stbi_image_free(data);
+  return texture;
 }

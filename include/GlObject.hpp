@@ -17,12 +17,36 @@ struct ColoredVertex {
   glm::vec3 Normal;
 };
 
+struct TexturedVertex {
+  glm::vec3 Position;
+  glm::vec2 TextureCoords;
+  glm::vec3 Normal;
+};
+
 class ColoredMesh {
  public:
   std::vector<ColoredVertex>  vertices;
   std::vector<unsigned int>   indices;
 
   ColoredMesh(std::vector<ColoredVertex> vertices, std::vector<unsigned int> indices);
+
+  // Рендеринг mesh-а
+  void Draw(Shader& shader);
+
+ private:
+  // Данные для рендеринга
+  unsigned int VBO, VAO, EBO;
+  // Инициализируем все буферные объекты/массивы
+  void SetUp();
+};
+
+class TexturedMesh {
+ public:
+  std::vector<TexturedVertex> vertices;
+  std::vector<unsigned int>   indices;
+  unsigned int texture;
+
+  TexturedMesh(std::vector<TexturedVertex> vertices, std::vector<unsigned int> indices, unsigned int texture);
 
   // Рендеринг mesh-а
   void Draw(Shader& shader);
