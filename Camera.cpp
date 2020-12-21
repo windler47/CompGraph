@@ -1,10 +1,5 @@
-//
-// Created by Aleksandr Maksimov on 19.12.2020.
-//
-
 #include "Camera.hpp"
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/ext.hpp>
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up, uint32_t fov) {
   Position = position;

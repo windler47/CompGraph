@@ -1,7 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 21.12.2020.
-//
-
 #ifndef COMPUTERGRAPHICSNEW__LAB_WORK_1_HPP_
 #define COMPUTERGRAPHICSNEW__LAB_WORK_1_HPP_
 #include "GlObject.hpp"

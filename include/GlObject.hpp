@@ -1,6 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 19.12.2020.
-//
 
 #ifndef COMPUTERGRAPHICSNEW__GLOBJECT_HPP_
 #define COMPUTERGRAPHICSNEW__GLOBJECT_HPP_

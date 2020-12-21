@@ -1,6 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 17.12.2020.
-//
 #define GL_SILENCE_DEPRECATION  // We know that Apple don't like OpenGL API since macOS 10.14 but still want to use it
 #define GLFW_INCLUDE_NONE
 

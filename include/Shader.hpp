@@ -1,7 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 17.12.2020.
-//
-
 #ifndef COMPUTERGRAPHICSNEW_SHADER_HPP
 #define COMPUTERGRAPHICSNEW_SHADER_HPP
 

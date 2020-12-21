@@ -1,7 +1,3 @@
-//
-// Created by Aleksandr Maksimov on 19.12.2020.
-//
-
 #include "GlObject.hpp"
 
 #include <utility>
