@@ -15,9 +15,6 @@
 #include "Camera.hpp"
 #include "GlObject.hpp"
 
-#include "lab_work_1.hpp"
-#include "lab_work_2.hpp"
-
 int main(int argc, char *argv[]) {
   unsigned int lab_number = 0;
   if (argc < 2){
@@ -42,54 +39,55 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  int windowWidth = 640;
-  int windowHeight = 480;
-  GLFWwindow *window = prepareWindow(windowWidth, windowHeight, "Honor");
+  int windowWidth = 800;
+  int windowHeight = 600;
+  GLFWwindow *window = prepareWindow(windowWidth, windowHeight, "Maksimov");
   loadGl();
   // configure gl
   glClearColor(0, 0, 0, 1);
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LESS);
 
+  unsigned int indices[] = {  // помните, что мы начинаем с 0!
+      0, 3, 1,
+      1, 4, 2,
+      1, 3, 4
+  };
+  ColoredVertex vertices[] = {
+      {.Position = glm::vec3(3.0f,  3.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(0.0f,  3.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(-3.0f,  3.0f,  0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(1.5f,  0.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(-1.5f,  0.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+  };
+
   Camera camera = Camera(glm::vec3(20.0f, 20.0f, 20.0f));
   Shader shader("shaders/color_vertex.glsl", "shaders/color_fragment.glsl");
   shader.Use();
   shader.setMat4("projection", camera.GetProjectionMatrix((float) windowWidth, (float) windowHeight));
-  shader.setVec3("light.direction", 1.0f, 1.0f, 1.0f);
+  shader.setVec3("light.direction", -1.0f, -1.0f, -1.0f);
   shader.setFloat("light.ambient", 0.05f);
   shader.setFloat("light.diffuse", 0.5f);
   shader.setFloat("light.specular", 0.9f);
 
   std::vector<ColoredVertex> vertex_vector;
   std::vector<unsigned int> index_vector;
-  switch ( lab_number ) {
-    case 1:
-      vertex_vector = std::vector(std::begin(LabFirst::vertices), std::end(LabFirst::vertices));
-      index_vector = std::vector(std::begin(LabFirst::indices), std::end(LabFirst::indices));
-      break;
-    case 2:
-      vertex_vector = std::vector(std::begin(LabSecond::vertices), std::end(LabSecond::vertices));
-      for (int i = 0; i < vertex_vector.size(); ++i) {
-        index_vector.push_back(i);
-      }
-      break;
-    default:
-      std::cout << "Unknown lab number" << std::endl;
-      break;
-  }
-  ColoredMesh figure = ColoredMesh(vertex_vector, index_vector);
+  vertex_vector = std::vector(std::begin(vertices), std::end(vertices));
+  index_vector = std::vector(std::begin(indices), std::end(indices));
 
-  const double camera_offset = -20.0 / 3.0;
+  std::vector<ColoredVertex> two_sided_vertex_vector(vertex_vector);
+  auto two_sided_index_vector(index_vector);
+  for (int i = 0; i < vertex_vector.size(); ++i) {
+    auto mirror_vertex = ColoredVertex {.Position = vertices[i].Position, .Color = vertices[i].Color, .Normal = - vertices[i].Normal };
+    two_sided_vertex_vector.push_back(mirror_vertex);
+  }
+  for (unsigned int i : index_vector) {
+    two_sided_index_vector.push_back(i+5);
+  }
+  ColoredMesh figure = ColoredMesh(two_sided_vertex_vector, two_sided_index_vector);
+
 
   while (!glfwWindowShouldClose(window)) {
-    if (lab_number != 1){
-      double t = glfwGetTime();
-      double ellipse_x = 7.0f * cos(t);
-      double ellipse_y = 12.0f * sin(t);
-      double z = -ellipse_x - ellipse_y - 20;
-      glm::vec3 camera_coords = glm::vec3(ellipse_x, ellipse_y, z);
-      camera.MoveTo(camera_coords);
-    }
 
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
@@ -108,15 +106,15 @@ int main(int argc, char *argv[]) {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-
+    model = glm::rotate(model,(float) (glfwGetTime() * 4.0f), glm::vec3(1.0f, 0.0f, .0f));
     shader.setMat4("model", model);
     figure.Draw(shader);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
   }
-
-  // cleanup: освобождаем все ресурсы, как только они выполнили свое предназначение
+//
+//  // cleanup: освобождаем все ресурсы, как только они выполнили свое предназначение
   glfwDestroyWindow(window);
   glfwTerminate();
   return 0;
