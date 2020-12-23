@@ -54,11 +54,11 @@ int main(int argc, char *argv[]) {
       1, 3, 4
   };
   ColoredVertex vertices[] = {
-      {.Position = glm::vec3(3.0f,  3.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(0.0f,  3.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(-3.0f,  3.0f,  0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(1.5f,  0.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
-      {.Position = glm::vec3(-1.5f,  0.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(5.0f,  5.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(0.0f,  5.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 0.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(-5.0f,  5.0f,  0.0f), .Color = glm::vec3(0.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(2.0f,  0.0f,  0.0f), .Color = glm::vec3(1.0f, 0.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
+      {.Position = glm::vec3(-2.0f,  0.0f,  0.0f), .Color = glm::vec3(0.0f, 1.0f, 1.0f), .Normal = glm::vec3(0, 0, 1)},
   };
 
   Camera camera = Camera(glm::vec3(20.0f, 20.0f, 20.0f));
@@ -67,8 +67,8 @@ int main(int argc, char *argv[]) {
   shader.setMat4("projection", camera.GetProjectionMatrix((float) windowWidth, (float) windowHeight));
   shader.setVec3("light.direction", -1.0f, -1.0f, -1.0f);
   shader.setFloat("light.ambient", 0.05f);
-  shader.setFloat("light.diffuse", 0.5f);
-  shader.setFloat("light.specular", 0.9f);
+  shader.setFloat("light.diffuse", 0.7f);
+  shader.setFloat("light.specular", 1.0f);
 
   std::vector<ColoredVertex> vertex_vector;
   std::vector<unsigned int> index_vector;
@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-    model = glm::rotate(model,(float) (glfwGetTime() * 4.0f), glm::vec3(1.0f, 0.0f, .0f));
+    model = glm::rotate(model,(float) (glfwGetTime() * 4.0f), glm::vec3(1.0f, 1.0f, .0f));
     shader.setMat4("model", model);
     figure.Draw(shader);
 
